@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>চাকমা বিপন্ন শব্দ সংরক্ষণ প্রকল্প</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    --bg: #F6F1E4;
+    --card: #FFFDF7;
+    --ink: #2B2420;
+    --ink-soft: #6B5F4F;
+    --forest: #435D3A;
+    --forest-dark: #32452B;
+    --terracotta: #B25936;
+    --gold: #C79A3D;
+    --border: #DFD4B8;
+    --danger: #A8432B;
+
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, "Noto Sans Bengali", "SolaimanLipi", "Segoe UI", sans-serif;
+    margin: 0;
+    min-height: 100vh;
+  }
+  #harano-sur-root { max-width: 480px; margin: 0 auto; padding: 0 0 48px; min-height: 100vh; }
+
+  .hs-hero {
+    position: relative;
+    padding: 28px 20px 20px;
+    background: linear-gradient(180deg, #F0E8D2 0%, var(--bg) 100%);
+    border-bottom: 1px solid var(--border);
+  }
+  .hs-eyebrow { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--forest); font-weight: 700; margin-bottom: 6px; }
+  .hs-title { font-family: Georgia, "Noto Serif Bengali", serif; font-size: 22px; font-weight: 700; margin: 0 0 4px; line-height: 1.3; color: var(--ink); }
+  .hs-sub { font-size: 13.5px; color: var(--ink-soft); line-height: 1.5; margin: 0; }
+  .hs-hills { display: block; margin-top: 16px; width: 100%; height: 28px; }
+
+  .hs-body { padding: 18px 16px; }
+
+  .hs-notice {
+    background: #EFE7D0; border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 12px; font-size: 12px; color: var(--forest-dark); margin-bottom: 16px; line-height: 1.5;
+  }
+  .hs-notice.warn { background: #F3DCD3; color: var(--danger); }
+
+  .hs-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+
+  .hs-section-label {
+    font-size: 12px; font-weight: 700; color: var(--forest); text-transform: uppercase;
+    letter-spacing: 0.06em; margin: 18px 0 10px; padding-bottom: 6px; border-bottom: 1px dashed var(--border);
+  }
+  .hs-section-label:first-child { margin-top: 0; }
+
+  .hs-field { margin-bottom: 12px; }
+  .hs-field label { display: block; font-size: 12.5px; color: var(--ink-soft); margin-bottom: 4px; }
+  .hs-field input, .hs-field select, .hs-field textarea {
+    width: 100%; padding: 10px 11px; font-size: 15px; border: 1px solid var(--border);
+    border-radius: 7px; background: #fff; color: var(--ink); font-family: inherit;
+  }
+  .hs-field input:focus, .hs-field select:focus, .hs-field textarea:focus {
+    outline: none; border-color: var(--forest); box-shadow: 0 0 0 3px rgba(67,93,58,0.12);
+  }
+  .hs-field textarea { resize: vertical; min-height: 54px; }
+  .hs-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .hs-btn { width: 100%; padding: 13px; border-radius: 8px; border: none; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .hs-btn-primary { background: var(--forest); color: #fff; margin-top: 6px; }
+  .hs-btn-primary:disabled { opacity: 0.6; }
+  .hs-btn-primary:active { background: var(--forest-dark); }
+  .hs-btn-secondary { background: transparent; color: var(--forest); border: 1px solid var(--forest); }
+  .hs-status { font-size: 12.5px; text-align: center; margin-top: 8px; min-height: 16px; color: var(--forest-dark); }
+  .hs-status.err { color: var(--danger); }
+
+  .hs-export-row { display: flex; gap: 8px; margin-bottom: 16px; }
+  .hs-export-row .hs-btn { flex: 1; padding: 10px; font-size: 13px; }
+
+  .hs-count-bar { display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; color: var(--ink-soft); margin-bottom: 14px; padding: 0 2px; }
+  .hs-count-bar strong { color: var(--forest-dark); font-size: 15px; }
+
+  .hs-entry {
+    background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--forest);
+    border-radius: 8px; padding: 12px 14px; margin-bottom: 10px;
+  }
+  .hs-entry.crit { border-left-color: var(--danger); }
+  .hs-entry.vuln { border-left-color: var(--gold); }
+  .hs-entry-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  .hs-entry-word { font-family: Georgia, "Noto Serif Bengali", serif; font-size: 18px; font-weight: 700; }
+  .hs-entry-meaning { font-size: 13.5px; color: var(--ink-soft); margin-top: 2px; }
+  .hs-tag { font-size: 10.5px; padding: 3px 8px; border-radius: 20px; white-space: nowrap; font-weight: 700; background: #EFE7D0; color: var(--forest-dark); }
+  .hs-tag.crit { background: #F3DCD3; color: var(--danger); }
+  .hs-tag.vuln { background: #F3E6C4; color: #8A6A1F; }
+  .hs-empty { text-align: center; color: var(--ink-soft); font-size: 13px; padding: 24px 10px; border: 1px dashed var(--border); border-radius: 10px; }
+
+  .hs-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .hs-chip {
+    font-family: inherit; font-size: 12.5px; padding: 6px 12px; border-radius: 20px;
+    border: 1px solid var(--border); background: #fff; color: var(--ink-soft); cursor: pointer;
+  }
+  .hs-chip.active { background: var(--forest); color: #fff; border-color: var(--forest); }
+
+  .hs-dup-warning {
+    background: #F3E6C4; border: 1px solid var(--gold); border-radius: 8px;
+    padding: 8px 10px; font-size: 12px; color: #8A6A1F;
+  }
+  .hs-footer { text-align: center; font-size: 11px; color: var(--ink-soft); padding: 20px 16px 0; }
+</style>
+</head>
+<body>
+<div id="harano-sur-root">
+  <div class="hs-hero">
+    <div class="hs-eyebrow">Chakma Language Hub</div>
+    <h1 class="hs-title">চাকমা বিপন্ন শব্দ সংরক্ষণ প্রকল্প</h1>
+    <p class="hs-sub">হারিয়ে যাওয়া চাকমা শব্দ সংরক্ষণের একটি ডাটাবেস। প্রতিটি শব্দ, তার অর্থ ও প্রসঙ্গ এখানে লিখে রাখুন — যাতে তা ভবিষ্যৎ প্রজন্মের জন্য থেকে যায়।</p>
+    <svg class="hs-hills" viewBox="0 0 400 28" preserveAspectRatio="none">
+      <path d="M0 28 L40 8 L75 22 L120 4 L165 20 L210 10 L260 24 L300 6 L340 18 L400 12 L400 28 Z" fill="#435D3A" opacity="0.18"/>
+      <path d="M0 28 L60 16 L110 26 L150 12 L200 24 L250 14 L300 26 L350 16 L400 22 L400 28 Z" fill="#435D3A" opacity="0.32"/>
+    </svg>
+  </div>
+
+  <div class="hs-body">
+    <div class="hs-notice" id="hs-config-notice">
+      এখানে যা লিখবেন তা সরাসরি প্রজেক্টের কেন্দ্রীয় ডাটাবেসে জমা হবে — সব collector-এর data এক জায়গায় থাকবে।
+    </div>
+
+    <div class="hs-count-bar">
+      <span>এই সেশনে যোগ করা হয়েছে</span>
+      <strong id="hs-count">0</strong>
+    </div>
+
+    <form class="hs-card" id="hs-form">
+      <div class="hs-section-label">শব্দ</div>
+      <div class="hs-field">
+        <label>চাকমা শব্দ (বাংলা হরফে) *</label>
+        <input type="text" id="f-chakma" placeholder="যেমন: ওজা" required autocomplete="off">
+      </div>
+      <div class="hs-field">
+        <label>চাকমা লিপি (জানা থাকলে, পরে করলেও চলবে)</label>
+        <input type="text" id="f-chakma-script">
+      </div>
+      <div class="hs-field">
+        <label>বাংলা অর্থ *</label>
+        <input type="text" id="f-bn" required>
+      </div>
+      <div class="hs-dup-warning" id="hs-dup-warning" style="display:none;"></div>
+
+      <div class="hs-section-label">বিপন্নতা</div>
+      <div class="hs-row2">
+        <div class="hs-field">
+          <label>বিপন্নতার মাত্রা</label>
+          <select id="f-level">
+            <option value="still_in_use">এখনো প্রচলিত</option>
+            <option value="vulnerable">ঝুঁকিপূর্ণ (কম ব্যবহৃত)</option>
+            <option value="critically_endangered">গুরুতর বিপন্ন</option>
+          </select>
+        </div>
+        <div class="hs-field">
+          <label>কারা ব্যবহার করেন</label>
+          <select id="f-age">
+            <option value="">নির্বাচন করুন</option>
+            <option>শুধু প্রবীণরা</option>
+            <option>প্রবীণ ও মধ্যবয়সীরা</option>
+            <option>সকল বয়সে প্রচলিত</option>
+          </select>
+        </div>
+      </div>
+      <div class="hs-field">
+        <label>অঞ্চল / উপভাষা</label>
+        <input type="text" id="f-region" placeholder="যেমন: রাঙ্গামাটি">
+      </div>
+      <div class="hs-field">
+        <label>শব্দ-ক্ষেত্র (domain)</label>
+        <div class="hs-chips" id="hs-domain-chips">
+          <button type="button" class="hs-chip" data-val="কৃষি">কৃষি</button>
+          <button type="button" class="hs-chip" data-val="আচার/ধর্ম">আচার/ধর্ম</button>
+          <button type="button" class="hs-chip" data-val="আত্মীয়তা">আত্মীয়তা</button>
+          <button type="button" class="hs-chip" data-val="প্রকৃতি">প্রকৃতি</button>
+          <button type="button" class="hs-chip" data-val="খাদ্য">খাদ্য</button>
+          <button type="button" class="hs-chip" data-val="পোশাক">পোশাক</button>
+          <button type="button" class="hs-chip" data-val="হস্তশিল্প">হস্তশিল্প</button>
+        </div>
+        <input type="text" id="f-domain" placeholder="বা নিজে লিখুন" style="margin-top:8px;">
+      </div>
+
+      <div class="hs-section-label">প্রসঙ্গ</div>
+      <div class="hs-field">
+        <label>উদাহরণ বাক্য</label>
+        <textarea id="f-example"></textarea>
+      </div>
+      <div class="hs-field">
+        <label>প্রচলিত/সমার্থক শব্দ (যদি থাকে)</label>
+        <input type="text" id="f-related">
+      </div>
+
+      <button type="submit" class="hs-btn hs-btn-primary" id="hs-submit">শব্দ পাঠান</button>
+      <div class="hs-status" id="hs-status"></div>
+    </form>
+
+    <div id="hs-list"></div>
+
+    <div class="hs-footer">Chakma Language Hub &middot; Endangered Word Documentation</div>
+  </div>
+</div>
+
+<script>
+(function() {
+  // ==== একবারই বদলাতে হবে ====
+  // Google Apps Script deploy করার পর যে "Web app URL" পাবে, সেটা এখানে বসাও
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyk7jUkuVeB_LrsWhPADXUqEOglXYc8-lrkZCnqsDSoBvVRX2YPEhkQ_y87cFeCGKOO/exec";
+  // ============================
+
+  let sessionEntries = [];
+  let submitting = false;
+
+  const form = document.getElementById('hs-form');
+  const statusEl = document.getElementById('hs-status');
+  const listEl = document.getElementById('hs-list');
+  const countEl = document.getElementById('hs-count');
+  const submitBtn = document.getElementById('hs-submit');
+  const configNotice = document.getElementById('hs-config-notice');
+  const chakmaInput = document.getElementById('f-chakma');
+  const domainInput = document.getElementById('f-domain');
+  const dupWarning = document.getElementById('hs-dup-warning');
+
+  // এই field গুলো একজন speaker থেকে অনেক শব্দ নেওয়ার সময় submit করার পরও থেকে যাবে
+  const STICKY_IDS = ['f-region', 'f-level', 'f-age', 'f-domain'];
+
+  // domain quick-select chip
+  document.getElementById('hs-domain-chips').addEventListener('click', function(ev) {
+    const btn = ev.target.closest('.hs-chip');
+    if (!btn) return;
+    const val = btn.getAttribute('data-val');
+    const alreadyActive = btn.classList.contains('active');
+    document.querySelectorAll('.hs-chip').forEach(function(c) { c.classList.remove('active'); });
+    if (alreadyActive) {
+      domainInput.value = '';
+    } else {
+      btn.classList.add('active');
+      domainInput.value = val;
+    }
+  });
+
+  // duplicate check — এই সেশনে একই বানানের শব্দ আগে ঢোকানো হয়েছে কিনা
+  chakmaInput.addEventListener('input', function() {
+    const val = chakmaInput.value.trim().toLowerCase();
+    if (!val) { dupWarning.style.display = 'none'; return; }
+    const isDup = sessionEntries.some(function(e) { return (e.chakma || '').trim().toLowerCase() === val; });
+    if (isDup) {
+      dupWarning.textContent = '⚠️ এই শব্দটি এই সেশনে আগেও যোগ করা হয়েছে — নতুন variant/context হলে চালিয়ে যান।';
+      dupWarning.style.display = 'block';
+    } else {
+      dupWarning.style.display = 'none';
+    }
+  });
+
+  if (!SCRIPT_URL || SCRIPT_URL.indexOf('PASTE_YOUR') === 0) {
+    configNotice.textContent = '⚠️ এখনো কেন্দ্রীয় ডাটাবেস সংযুক্ত করা হয়নি। কোডে SCRIPT_URL বসান — ততক্ষণ শব্দ শুধু এই সেশনে (browser-এ) থাকবে, কোথাও জমা হবে না।';
+    configNotice.classList.add('warn');
+  }
+
+  function levelLabel(v) {
+    if (v === 'critically_endangered') return 'গুরুতর বিপন্ন';
+    if (v === 'vulnerable') return 'ঝুঁকিপূর্ণ';
+    return 'প্রচলিত';
+  }
+  function levelClass(v) {
+    if (v === 'critically_endangered') return 'crit';
+    if (v === 'vulnerable') return 'vuln';
+    return '';
+  }
+  function resetNonSticky() {
+    const allIds = ['f-chakma', 'f-chakma-script', 'f-bn',
+      'f-level', 'f-age', 'f-region', 'f-domain', 'f-example', 'f-related'];
+    allIds.forEach(function(id) {
+      if (STICKY_IDS.indexOf(id) === -1) {
+        document.getElementById(id).value = '';
+      }
+    });
+    dupWarning.style.display = 'none';
+    chakmaInput.focus();
+  }
+
+  function escapeHtml(s) {
+    if (!s) return '';
+    return s.replace(/[&<>"']/g, function(c) {
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  function render() {
+    countEl.textContent = sessionEntries.length;
+    if (sessionEntries.length === 0) {
+      listEl.innerHTML = '<div class="hs-empty">এই সেশনে এখনো কোনো শব্দ পাঠানো হয়নি।</div>';
+      return;
+    }
+    listEl.innerHTML = sessionEntries.slice().reverse().map(function(e) {
+      return '<div class="hs-entry ' + levelClass(e.level) + '">' +
+        '<div class="hs-entry-top">' +
+          '<div><div class="hs-entry-word">' + escapeHtml(e.chakma) + '</div>' +
+          '<div class="hs-entry-meaning">' + escapeHtml(e.bn) + '</div></div>' +
+          '<span class="hs-tag ' + levelClass(e.level) + '">' + levelLabel(e.level) + '</span>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function readForm() {
+    return {
+      chakma: document.getElementById('f-chakma').value.trim(),
+      chakma_script: document.getElementById('f-chakma-script').value.trim(),
+      bn: document.getElementById('f-bn').value.trim(),
+      level: document.getElementById('f-level').value,
+      age: document.getElementById('f-age').value,
+      region: document.getElementById('f-region').value.trim(),
+      domain: document.getElementById('f-domain').value.trim(),
+      example: document.getElementById('f-example').value.trim(),
+      related: document.getElementById('f-related').value.trim()
+    };
+  }
+
+  form.addEventListener('submit', function(ev) {
+    ev.preventDefault();
+    if (submitting) return;
+    const data = readForm();
+    if (!data.chakma || !data.bn) {
+      statusEl.textContent = 'চাকমা শব্দ ও বাংলা অর্থ আবশ্যক।';
+      statusEl.classList.add('err');
+      return;
+    }
+    statusEl.classList.remove('err');
+
+    const useSheet = SCRIPT_URL && SCRIPT_URL.indexOf('PASTE_YOUR') !== 0;
+
+    if (!useSheet) {
+      sessionEntries.push(data);
+      statusEl.textContent = 'শব্দ যোগ হয়েছে (এই সেশনেই থাকছে, কেন্দ্রীয় জায়গায় জমা হয়নি)।';
+      resetNonSticky();
+      render();
+      setTimeout(function() { statusEl.textContent = ''; }, 3000);
+      return;
+    }
+
+    submitting = true;
+    submitBtn.disabled = true;
+    statusEl.textContent = 'পাঠানো হচ্ছে...';
+
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(data)
+    })
+      .then(function(res) { return res.json(); })
+      .then(function(res) {
+        submitting = false;
+        submitBtn.disabled = false;
+        if (res && res.status === 'success') {
+          sessionEntries.push(data);
+          statusEl.textContent = '✓ শব্দ সংরক্ষিত হয়েছে।';
+          resetNonSticky();
+          render();
+        } else {
+          statusEl.textContent = 'পাঠাতে সমস্যা হয়েছে, আবার চেষ্টা করুন।';
+          statusEl.classList.add('err');
+        }
+        setTimeout(function() { statusEl.textContent = ''; statusEl.classList.remove('err'); }, 3000);
+      })
+      .catch(function() {
+        submitting = false;
+        submitBtn.disabled = false;
+        statusEl.textContent = 'ইন্টারনেট সংযোগ পরীক্ষা করুন, পাঠানো যায়নি।';
+        statusEl.classList.add('err');
+      });
+  });
+
+  function downloadBlob(content, filename, mime) {
+    const blob = new Blob([content], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>
